@@ -4,7 +4,7 @@
   "description": "ralali close wallet microservice",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "test": "npm test"
   },
   "author": "ralali dev team",
