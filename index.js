@@ -27,8 +27,9 @@ findFileRoute(routePath).forEach(absolutePath => require(absolutePath)(app))
 
 /* create server */
 const server = require('http').createServer(app);
+const PORT = process.env.PORT || 5000
 if (!module.parent) {
-    server.listen(process.env.APP_PORT, () => {
+    server.listen(PORT, () => {
         logger.info('Express Server Now Running. port:', process.env.APP_PORT)
     })
 }
