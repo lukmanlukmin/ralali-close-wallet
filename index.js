@@ -30,7 +30,8 @@ const server = require('http').createServer(app);
 const PORT = process.env.PORT || 5000
 if (!module.parent) {
     server.listen(PORT, () => {
-        logger.info('Express Server Now Running. port:', process.env.APP_PORT)
+        console.log('Express Server Now Running. port:', PORT)
+        logger.info('Express Server Now Running. port:', PORT)
     })
 }
 module.exports = app
