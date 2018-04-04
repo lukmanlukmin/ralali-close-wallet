@@ -2,6 +2,7 @@
 require('dotenv').load()
 const { logger, expressLogger, expressLoggerError } = require('./src/helper/logger')
 const express = require('express')
+const OAuthServer = require('express-oauth-server')
 const fs = require('fs')
 const app = express()
 const routePath = './src/router/api/v1'
@@ -21,13 +22,16 @@ const findFileRoute = dir => {
 // express logger
 if(process.env.LOG_LEVEL_ROUTER=='error') app.use(expressLoggerError)
 else app.use(expressLogger)
-
+app.oauth = new OAuthServer({
+    model: require('./src/dao/oauth_dao')
+})
+app.use(app.oauth.authorize());
 /* build router */
 findFileRoute(routePath).forEach(absolutePath => require(absolutePath)(app))
 
 /* create server */
 const server = require('http').createServer(app);
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || process.env.APP_PORT || 3000
 if (!module.parent) {
     server.listen(PORT, () => {
         console.log('Express Server Now Running. port:', PORT)
