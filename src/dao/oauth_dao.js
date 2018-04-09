@@ -6,22 +6,22 @@ const { logger } = require('../helper/logger')
 // getAccessToken(accessToken, [callback])
 // getClient(clientId, clientSecret, [callback])
 // getRefreshToken(refreshToken, [callback])
-// getUserFromClient(client, [callback])
+// getUser(username, password, [callback])
 // saveToken(token, client, user, [callback])
+// saveAuthorizationCode(code, client, user, [callback])
 // 
 // 
 // generateAccessToken(client, user, scope, [callback])
 // generateRefreshToken(client, user, scope, [callback])
 // generateAuthorizationCode(client, user, scope, [callback])
 // getAuthorizationCode(authorizationCode, [callback])
-// saveAuthorizationCode(code, client, user, [callback])
 // revokeAuthorizationCode(code, [callback])
 // validateScope(user, client, scope, [callback])
 // revokeToken(token, [callback])
-// getUser(username, password, [callback])
+// getUserFromClient(client, [callback])
 // verifyScope(accessToken, scope, [callback])
 
-module.exports.getAccessToken = (access_token) => {
+const getAccessToken = (access_token) => {
 	return oauth.oauth_tokens.findOne({
 		where : {
 			access_token
@@ -39,7 +39,7 @@ module.exports.getAccessToken = (access_token) => {
 	})
 }
 
-module.exports.getClient = (client_id, client_secret)=>{
+const getClient = (client_id, client_secret)=>{
 	return oauth.oauth_clients.findOne({
 		where : {
 			client_id, client_secret
@@ -56,7 +56,7 @@ module.exports.getClient = (client_id, client_secret)=>{
 	})
 }
 
-module.exports.getRefreshToken = (refresh_token) => {
+const getRefreshToken = (refresh_token) => {
 	return oauth.oauth_tokens.findOne({
 		where : {
 			refresh_token
@@ -76,7 +76,7 @@ module.exports.getRefreshToken = (refresh_token) => {
 	})
 }
 
-module.exports.getUser = (username, password) => {
+const getUser = (username, password) => {
 	return oauth.users.findOne({
 		where : {
 			username, password
@@ -91,7 +91,7 @@ module.exports.getUser = (username, password) => {
 	})
 }
 
-module.exports.saveToken = (token, client, user) => {
+const saveToken = (token, client, user) => {
 	return oauth.oauth_tokens.build({
 		access_token : token.accessToken,
 	    access_token_expires_on: token.accessTokenExpiresOn,
@@ -105,3 +105,16 @@ module.exports.saveToken = (token, client, user) => {
 		return false;
 	})
 };
+
+const saveAuthorizationCode = (code, client, user) => {
+
+}
+
+module.exports = {
+	getAccessToken,
+	getClient,
+	getRefreshToken,
+	getUser,
+	saveToken,
+	saveAuthorizationCode
+}
