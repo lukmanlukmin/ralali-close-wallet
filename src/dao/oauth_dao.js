@@ -1,5 +1,5 @@
 'use strict'
-const { oauth } = require('../model')
+const oauth = require('../model')
 const { logger } = require('../helper/logger')
 
 

@@ -12,7 +12,7 @@ const routePath = './src/router/api/v1'
 const findFileRoute = dir => {
     let results = []
     const list = fs.readdirSync(dir)
-    list.forEach(function (file) {
+    list.forEach(file => {
         file = dir + '/' + file
         let stat = fs.statSync(file)
         if (stat && stat.isDirectory()) results = results.concat(findFileRoute(file))
@@ -27,7 +27,7 @@ const swaggerOption = {
         info: {
             title: 'Ralali Close Wallet API Specs',
             version: '1.0.0',
-            description: 'Specification for Closed Wallet API typcially used for transactions, cancellations, refunds and cashback. This API is designed for use on the [Ralali, B2B marketplace](https://www.ralali.com/). Internally each account will have three accounts.  <br><br>- **Key Account** for holding users account balance   <br>- **Transition Account** for receiving fund as a seller. The balance will be held until goods are delivered   <br>- **Cashback Account** to credit account with discount or cashback',
+            description: 'Specification for Closed Wallet API typcially used for transactions, cancellations, refunds and cashback. This API is designed for use on the [Ralali, B2B marketplace](https://www.ralali.com/). Internally each account will have three accounts.  <br><br>- **Key Account** for holding users account balance   <br>- **Transition Account** for receiving fund as a seller. The balance will be held until goods are delivered   <br>- **Cashback Account** to credit account with discount or cashback <br><br> All transaction will be converted into (IDR) Indonesian Rupiah Curency',
             contact: {
                 name: "Dev-Ralali",
                 // url: "https://www.ralali.com/hubungikami",

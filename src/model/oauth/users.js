@@ -13,7 +13,47 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     password: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    currency: {
+      type: DataTypes.ENUM('IDR','USD','CNY'),
+      allowNull: false
+    },
+    user_wallet_recovery1: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    user_wallet_recovery2: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    user_wallet_recovery3: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updated_at: {
+      type: DataTypes.DATE,
       allowNull: false
     }
   }, {

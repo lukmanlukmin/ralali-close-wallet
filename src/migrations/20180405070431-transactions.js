@@ -18,10 +18,6 @@ module.exports = {
           allowNull: false,
           type: Sequelize.ENUM('Order','Cancel','Refund','PartialRefund','Credit','Confirmed','Cashback','DebitToSettlement')
         },
-        status: {
-          allowNull: false,
-          type: Sequelize.ENUM('Debit','Credit')
-        },
         txn_date: {
           allowNull: false,
           type: Sequelize.DATE
@@ -48,7 +44,7 @@ module.exports = {
         },
         created_at: {
           allowNull: false,
-          type: Sequelize.DATE
+          type: Sequelize.DATE,
         },
         updated_at: {
           allowNull: false,
