@@ -3,6 +3,7 @@ const { currency,transaction } = require('../dao')
 const { logger } = require('../helper/logger')
 const math = require('mathjs')
 const uuidv1 = require('uuid/v1')
+const Promise = require('bluebird')
 
 /**
 	data(object) 
@@ -99,13 +100,41 @@ const historyTransaction = (data, id) => {
 /**
 	-userId: integer
 **/
-const getBalanceByUser = (id) => {
-	// 
+const getBalanceByUser = id => {
+	const listTransaction = transaction.getListTransaction({
+		limit:5,
+		offset:0
+	}, id, 'DESC')
+	.then(dataList=>{
+		return dataList.reduce((arrayData, dataObj)=>{
+			arrayData.push({
+			    trans_id: dataObj.trans_id,
+			    trans_type: dataObj.trans_type,
+			    trans_date: dataObj.trans_date,
+			    linked_txn_id: dataObj.linked_txn_id,
+			    status: (dataObj.beneficiary_id==id)? 'Debit' : 'Credit',
+			    amount: dataObj.amount,
+			    amount_currency: dataObj.amount_currency,
+			    created_at: dataObj.created_at,
+			    updated_at: dataObj.updated_at,
+			    amount_idr: dataObj.amount_idr
+			})
+			return arrayData
+		}, [])
+	})
+	const userDetail;
+
+	Promise.all([promise1, promise2, promise3]).then(function(values) {
+	  console.log(values);
+	})
 }
+
+const countBalanceUser = id => transaction.getSummaryBallanceByUserId(id)
 
 module.exports = {
 	debit,
 	translateCurrencyToIDR,
 	translateCurrencyToCurency,
-	historyTransaction
+	historyTransaction,
+	countBalanceUser
 }

@@ -1,6 +1,7 @@
 'use strict'
 const model = require('../model')
 const { logger } = require('../helper/logger')
+const math = require('mathjs')
 
 
 
@@ -20,23 +21,39 @@ const saveTransaction = (data) => {
 	})
 };
 
-const getListTransaction = (data, id) => {
+const getListTransaction = (data, id, order='ASC') => {
+	let where = {
+		$or: [
+			{ obligor_id: id }, 
+			{ beneficiary_id: id }
+		]
+	}
+	if(data.startDate!==undefined && data.endDate!==undefined)
+	where.created_at = {
+    	$between: [data.startDate, data.endDate]
+   	}
 	return model.transactions.find({
-		where : {
-			$or: [
-				{ obligor_id: id }, 
-				{ beneficiary_id: id }
-			],
-			created_at: {
-            	$between: [data.startDate, data.endDate]
-           	}
-		},
+		where,
 		limit: data.limit, 
-		offset: data.offset
+		offset: data.offset,
+		order: [
+            ['id', order]
+        ],
 	})
 };
 
+const getSummaryBallanceByUserId = id => {
+	const queryString = 'select (select sum(amount) from transactions where obligor_id='+id+') AS debit, (select sum(amount) from transactions where beneficiary_id='+id+') AS credit'
+    return model.sequelize.query(queryString, { type: Sequelize.QueryTypes.SELECT})
+	.then(data=>{
+ 		credit:data.credit,
+ 		debit:data.debit,
+ 		balance:math.chain(data.debit).subtract(data.credit).done()
+ 	})
+}
+
 module.exports = {
 	saveTransaction,
-	getListTransaction
+	getListTransaction,
+	getSummaryBallanceByUserId
 }
