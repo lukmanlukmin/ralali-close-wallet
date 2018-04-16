@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth_tokens', {
+  return sequelize.define('oauth_access_tokens', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -16,12 +16,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false
     },
-    client_id: {
+    client_detail_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'oauth_clients',
-        key: 'client_id'
+        model: 'oauth_client_details',
+        key: 'id'
       }
     },
     refresh_token: {
@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'user',
         key: 'id'
       }
     },
@@ -49,6 +49,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    tableName: 'oauth_tokens'
+    tableName: 'oauth_access_tokens'
   });
 };

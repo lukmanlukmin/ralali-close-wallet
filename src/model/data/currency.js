@@ -1,7 +1,12 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('currency_idr', {
+  sequelize.associate = models => {
+    models.currency.hasMany(models.transactions, {
+      foreignKey: 'currency_id'
+    })
+  }
+  return sequelize.define('currency', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -13,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     value: {
-      type: 'DOUBLE',
+      type: DataTypes.DECIMAL,
       allowNull: false
     },
     updated_at: {
@@ -26,6 +31,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    tableName: 'currency_idr'
+    tableName: 'currency'
   });
 };
