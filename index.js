@@ -2,7 +2,6 @@
 require('dotenv').load()
 const { logger, expressLogger, expressLoggerError } = require('./src/helper/logger')
 const express = require('express')
-const OAuthServer = require('express-oauth-server')
 const actuator = require('express-actuator')
 const swaggerJSDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
@@ -71,10 +70,6 @@ app.get('/api/v1/swagger.json', (req, res) => {
     res.send(swaggerSpec)
 })
 
-/* oauth definition */
-app.oauth = new OAuthServer({
-    model: require('./src/controller/oauth')
-})
 
 /* set middleware */
 // express logger
@@ -82,6 +77,8 @@ if(process.env.LOG_LEVEL_ROUTER=='error') app.use(expressLoggerError)
 else app.use(expressLogger)
 // actuator
 app.use(actuator('/actuator'))
+
+// oauth interceptor
 app.use(oauth.authenticate)
 
 /* build router */
