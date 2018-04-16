@@ -11,6 +11,7 @@
   "author": "ralali dev team",
   "license": "Apache-2.0",
   "dependencies": {
+    "axios": "^0.18.0",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-actuator": "^1.1.0",

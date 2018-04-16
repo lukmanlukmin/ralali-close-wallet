@@ -9,6 +9,7 @@ const swaggerUi = require('swagger-ui-express')
 const fs = require('fs')
 const app = express()
 const routePath = './src/router/api/v1'
+const oauth = require('./src/helper/oauth_interceptor')
 const findFileRoute = dir => {
     let results = []
     const list = fs.readdirSync(dir)
@@ -20,7 +21,6 @@ const findFileRoute = dir => {
     })
     return results
 }
-
 /* swagger definition */
 const swaggerOption = {
     swaggerDefinition: {
@@ -40,33 +40,32 @@ const swaggerOption = {
         },
         basePath: '/api/v1',
         securityDefinitions: {
-            wallet_auth: {
-                type: "oauth2",
-                authorizationUrl: "/oauth/dialog",
-                flow: "implicit",
-                scopes: {
-                    "write:wallet": "modify wallet records for a authenticated user",
-                    "read:wallet": "read records for validated user",
-                    "write:user": "modify user profile",
-                    "read:user": "read user profile details",
-                    "write:transaction": "transaction modification",
-                    "read:transaction": "transaction details",
-                },
-            },
-            api_key: {
+            // wallet_auth: {
+            //     type: "oauth2",
+            //     authorizationUrl: "/oauth/dialog",
+            //     flow: "implicit",
+            //     scopes: {
+            //         "write:wallet": "modify wallet records for a authenticated user",
+            //         "read:wallet": "read records for validated user",
+            //         "write:user": "modify user profile",
+            //         "read:user": "read user profile details",
+            //         "write:transaction": "transaction modification",
+            //         "read:transaction": "transaction details",
+            //     },
+            // },
+            Authorization: {
                 type: "apiKey",
-                name: "api_key",
-                in: "header"
+                in: "header",
+                name: "Authorization"
             }
         }
     },
-    apis: ['./src/router/**/**.js'],
+    apis: ['./src/router/**/**.js']
     
 }
+
 const swaggerSpec = swaggerJSDoc(swaggerOption)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, false, {}, '.topbar { display: none }'));
-
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, false, customCss))
 app.get('/api/v1/swagger.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     res.send(swaggerSpec)
@@ -74,7 +73,7 @@ app.get('/api/v1/swagger.json', (req, res) => {
 
 /* oauth definition */
 app.oauth = new OAuthServer({
-    model: require('./src/dao/oauth_dao')
+    model: require('./src/controller/oauth')
 })
 
 /* set middleware */
@@ -82,7 +81,8 @@ app.oauth = new OAuthServer({
 if(process.env.LOG_LEVEL_ROUTER=='error') app.use(expressLoggerError)
 else app.use(expressLogger)
 // actuator
-app.use(actuator('/actuator'));
+app.use(actuator('/actuator'))
+app.use(oauth.authenticate)
 
 /* build router */
 findFileRoute(routePath).forEach(absolutePath => require(absolutePath)(app))

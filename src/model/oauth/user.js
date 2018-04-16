@@ -1,30 +1,30 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('oauth_clients', {
-    client_id: {
+  return sequelize.define('user', {
+    id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    client_secret: {
+    email: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    redirect_uri: {
+    password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false
+    msisdn: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false
+    status: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true
     }
   }, {
-    tableName: 'oauth_clients'
+    tableName: 'user'
   });
 };

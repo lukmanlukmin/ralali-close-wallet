@@ -4,7 +4,7 @@ const { logger } = require('../helper/logger')
 
 
 const getCurrencyByTerm = (currency) => {
-	return model.currency_idr.findOne({
+	return model.currency.findOne({
 		where : {
 			currency
 		}
@@ -12,7 +12,7 @@ const getCurrencyByTerm = (currency) => {
 }
 
 const getCurrencyById = (id) => {
-	return model.currency_idr.findOne({
+	return model.currency.findOne({
 		where : {
 			id
 		}

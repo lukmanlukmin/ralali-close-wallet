@@ -123,9 +123,13 @@ const getBalanceByUser = id => {
 		}, [])
 	})
 	const userDetail;
-
-	Promise.all([promise1, promise2, promise3]).then(function(values) {
-	  console.log(values);
+	const summary=transaction.getSummaryBallanceByUserId(id);
+	Promise.all([listTransaction, userDetail, summary]).then(function(values) {
+	  return {
+	  	userInfo:values[1],
+	  	listTransaksi:values[0],
+	  	summary
+	  }
 	})
 }
 

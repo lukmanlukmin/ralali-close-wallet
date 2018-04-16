@@ -1,6 +1,12 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
+  sequelize.associate = models => {
+    models.transactions.hasMany(models.currency, {
+      foreignKey: 'currency_id'
+    })
+  }
+  
   return sequelize.define('transactions', {
     id: {
       type: DataTypes.INTEGER(11),
@@ -12,27 +18,23 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
-    trans_type: {
-      type: DataTypes.ENUM('Order','Cancel','Refund','PartialRefund','Credit','Confirmed','Cashback','DebitToSettlement'),
+    type: {
+      type: DataTypes.ENUM('Order','Refund','PartialRefund','Credit','Confirmed','Cashback','DebitToSettlement'),
       allowNull: false
     },
     trans_date: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    linked_txn_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
-      references: {
-        model: 'transactions',
-        key: 'id'
-      }
+    status: {
+      type: DataTypes.ENUM('Pending','Cancel','Completed'),
+      allowNull: false
     },
     obligor_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'user',
         key: 'id'
       }
     },
@@ -40,29 +42,46 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'user',
         key: 'id'
       }
+    },
+    linked_trans_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true
     },
     amount: {
       type: DataTypes.DECIMAL,
       allowNull: false
     },
-    amount_currency: {
-      type: DataTypes.ENUM('IDR','USD','CNY'),
-      allowNull: false
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false
+    currency_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'currency',
+        key: 'id'
+      }
     },
     amount_idr: {
       type: DataTypes.DECIMAL,
       allowNull: false
+    },
+    info_1: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    info_2: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     tableName: 'transactions'
