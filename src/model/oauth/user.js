@@ -8,22 +8,14 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    email: {
+    client_id: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    msisdn: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     status: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true
-    }
+      type: DataTypes.ENUM('Pending','Active'),
+      allowNull: false
+    },
   }, {
     tableName: 'user'
   });

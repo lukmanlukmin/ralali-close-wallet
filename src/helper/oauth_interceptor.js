@@ -3,15 +3,15 @@ const axios = require('axios')
 const { logger } = require('./logger')
 
 const authenticate = (req, res, next) => {
-	if (!req.headers.authorization) {
+    if(!req.headers.authorization) {
 		res.status(401).send({
 			authorized: false,
 			message: 'Full Authentication is Required to Access This Resource.'
 		})
-	}else return axios.get("https://www.google.com/")
+	}else return axios.get("https://api.myjson.com/bins/bv5xb")
 	.then(response => {
 		if(response.status==200){
-			console.log(response.status)
+			req.user = response.data
 			next()
 		}else{
 			// return res.status(403).send({

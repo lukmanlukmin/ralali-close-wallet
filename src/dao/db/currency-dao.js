@@ -1,6 +1,6 @@
 'use strict'
-const model = require('../model')
-const { logger } = require('../helper/logger')
+const model = require('../../model')
+const { logger } = require('../../helper/logger')
 
 
 const getCurrencyByTerm = (currency) => {

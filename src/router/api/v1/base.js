@@ -1,7 +1,5 @@
 'use strict'
 
-const oauth = require('./../../../helper/oauth_interceptor')
-
 const base_path = '/api/v1/'
 module.exports = (app) => {
   app.get(base_path, (req, res, next) => {
@@ -21,7 +19,6 @@ module.exports = (app) => {
    *     responses:
    *       200:
    *         description: sample value
-   *         schema:
    */
 	app.get(base_path+ 'authenticate', function(req, res) {
 		res.send('Secret area');

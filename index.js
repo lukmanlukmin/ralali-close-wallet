@@ -64,11 +64,7 @@ const swaggerOption = {
 }
 
 const swaggerSpec = swaggerJSDoc(swaggerOption)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, false, {}, '.topbar { display: none }'));
-app.get('/api/v1/swagger.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json')
-    res.send(swaggerSpec)
-})
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, false, {}, '.topbar { display: none }'))
 
 
 /* set middleware */

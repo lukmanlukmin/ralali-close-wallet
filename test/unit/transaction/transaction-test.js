@@ -7,72 +7,78 @@ const Promise = require('bluebird')
 
 
 describe('[TDD] Transaction Test', (done) => {
-  it('should return value from DB and converted', done => {
+  it('should return value from DB and converted. List transaction', (done) => {
     const data = {}
     var transactionStub   =  { }
-    var transactionService = proxyquire('./../../../src/controller/transaction', { '../dao': transactionStub });
+    var transactionService = proxyquire('./../../../src/controller/transaction', { '../dao/db': transactionStub });
     transactionStub.transaction.getListTransaction = (data, id) => new Promise(function(resolve, reject) {
       resolve([{
-        trans_id: '12345-12345-12334',
-        trans_type: 'Order',
-        trans_date: '2018-04-04 09:09:09',
-        linked_txn_id: data.linked_txn_id,
-        beneficiary_id: 2,
-        obligor_id: 1,
-        amount: 20000,
-        amount_currency: 'IDR',
-        created_at: '2018-04-04 09:09:09',
-        updated_at: '2018-04-04 09:09:09',
-        amount_idr: 20000
+        trans_id:'12345-12345-12334',
+        type:'Order',
+        trans_date:'2018-04-04 09:09:09',
+        status:'Completed',
+        obligor:{
+          id: 2,
+          name: 'Lukmin',
+          client_id: 2,
+          email: 'lukmin@mail.com'
+        },
+        beneficiary: {
+          id: 1,
+          client_id: 1,
+          name: 'Lukman',
+          email: 'lukman@mail.com'
+        },
+        linked_trans_id:null,
+        amount:20000,
+        currency:{
+          name: 'IDR',
+          desc: 'Indonesia Rupiah'
+        },
+        amount_idr:20000,
+        info_1:'ORD/123/12/12/2018',
+        info_2:'refund order',
+        created_at:'2018-04-04 09:09:09',
+        updated_at:'2018-04-04 09:09:09',
+      },
+      {
+        trans_id:'12345-12345-12335',
+        type:'Order',
+        trans_date:'2018-04-04 09:09:09',
+        status:'Completed',
+        obligor: {
+          id: 1,
+          client_id: 1,
+          name: 'Lukman',
+          email: 'lukman@mail.com'
+        },
+        beneficiary:{
+          id: 2,
+          client_id: 2,
+          name: 'Lukmin',
+          email: 'lukmin@mail.com'
+        },
+        linked_trans_id:null,
+        amount:20000,
+        currency:{
+          name: 'IDR',
+          desc: 'Indonesia Rupiah'
+        },
+        amount_idr:20000,
+        info_1:'ORD/123/12/12/2018',
+        info_2:'refund order',
+        created_at:'2018-04-04 09:09:09',
+        updated_at:'2018-04-04 09:09:09',
       }]);
     })
     
-    transactionService.historyTransaction(data, 1)
+    transactionService.historyTransaction(data, 2)
     .then(result=>{
       console.log(result)
-      // assert.equal(1,1)
+      assert.equal('Credit', result[0].direction_status)
+      assert.equal('Debit', result[1].direction_status)
       done()
     })
   })
 
-  it('should return value from DB and converted', done => {
-    const data = {}
-    var transactionStub   =  { }
-    var transactionService = proxyquire('./../../../src/controller/transaction', { '../dao': transactionStub });
-    transactionStub.transaction.getListTransaction = (data, id) => new Promise(function(resolve, reject) {
-      resolve([{
-        trans_id: '12345-12345-12334',
-        trans_type: 'Order',
-        trans_date: '2018-04-04 09:09:09',
-        linked_txn_id: data.linked_txn_id,
-        beneficiary_id: 2,
-        obligor_id: 1,
-        amount: 20000,
-        amount_currency: 'IDR',
-        created_at: '2018-04-04 09:09:09',
-        updated_at: '2018-04-04 09:09:09',
-        amount_idr: 20000
-      },
-      {
-        trans_id: '12345-12345-12334',
-        trans_type: 'Order',
-        trans_date: '2018-04-04 09:09:09',
-        linked_txn_id: data.linked_txn_id,
-        beneficiary_id: 2,
-        obligor_id: 1,
-        amount: 20000,
-        amount_currency: 'IDR',
-        created_at: '2018-04-04 09:09:09',
-        updated_at: '2018-04-04 09:09:09',
-        amount_idr: 20000
-      }]);
-    })
-    
-    transactionService.historyTransaction(data, 1)
-    .then(result=>{
-      console.log(result)
-      // assert.equal(1,1)
-      done()
-    })
-  })  
 })

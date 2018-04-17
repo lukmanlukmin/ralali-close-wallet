@@ -1,5 +1,6 @@
 'use strict'
-const { currency,transaction } = require('../dao')
+const { currency,transaction } = require('../dao/db')
+const { user } = require('../dao/api')
 const { logger } = require('../helper/logger')
 const math = require('mathjs')
 const uuidv1 = require('uuid/v1')
@@ -15,7 +16,7 @@ const Promise = require('bluebird')
 	-info_1: string,
 	-info_2: string
 **/
-const debit = (data, transactionDB) => {
+const debit = (data) => {
 	return translateCurrency = (data, currency.getCurrencyByTerm)
 	.then(amountIdr => {
 		if(!amount_idr){
@@ -74,71 +75,97 @@ const translateCurrencyToCurency = (data, curencyFromDb) => {
 	-dateEnd: date(object)
 	-limit: integer
 	-offset: integer
+	-order: string
 	userId integer
 **/
-const historyTransaction = (data, id) => {
+const historyTransaction = (data, id, token) => {
 	return transaction.getListTransaction(data, id)
+	.then(dataList => reduceListTransaction(dataList, id))
 	.then(dataList=>{
-		return dataList.reduce((arrayData, dataObj)=>{
-			arrayData.push({
-			    trans_id: dataObj.trans_id,
-			    trans_type: dataObj.trans_type,
-			    trans_date: dataObj.trans_date,
-			    linked_txn_id: dataObj.linked_txn_id,
-			    status: (dataObj.beneficiary_id==id)? 'Debit' : 'Credit',
-			    amount: dataObj.amount,
-			    amount_currency: dataObj.amount_currency,
-			    created_at: dataObj.created_at,
-			    updated_at: dataObj.updated_at,
-			    amount_idr: dataObj.amount_idr
-			})
+		const listUserId = dataList.reduce((arrayData, dataObj)=>{
+			arrayData.push(dataObj.opposite_user.client_id)
 			return arrayData
 		}, [])
+		return user.getListUserInfo(token, listUserId)
+		.then(users=> reduceFinalListTransaction(dataList, users))
 	})
 }
+
+const reduceListTransaction = (dataList, id) => {
+	return dataList.reduce((arrayData, dataObj)=>{
+		arrayData.push({
+		    trans_id: dataObj.trans_id,
+		    type: dataObj.type,
+		    trans_date: dataObj.trans_date,
+		    status: dataObj.status,
+		    opposite_user: (dataObj.beneficiary.id==id)? dataObj.obligor : dataObj.beneficiary,
+		    linked_trans_id: dataObj.linked_trans_id,
+		    direction_status: (dataObj.beneficiary.id==id)? 'Debit' : 'Credit',
+		    amount: dataObj.amount,
+		    curency: dataObj.currency,
+		    info_1: dataObj.info_1,
+		    info_2: dataObj.info_2,
+		    created_at: dataObj.created_at,
+		    updated_at: dataObj.updated_at,
+		})
+		return arrayData
+	}, [])
+}
+
+const reduceFinalListTransaction = (dataList, dataUser) => {
+	return dataList.reduce((arrayData, dataObj)=>{
+		arrayData.push({
+		    trans_id: dataObj.trans_id,
+		    type: dataObj.type,
+		    trans_date: dataObj.trans_date,
+		    status: dataObj.status,
+		    opposite_user: dataUser[dataObj.opposite_user.client_id],
+		    linked_trans_id: dataObj.linked_trans_id,
+		    direction_status: dataObj.direction_status,
+		    amount: dataObj.amount,
+		    curency: dataObj.currency,
+		    info_1: dataObj.info_1,
+		    info_2: dataObj.info_2,
+		    created_at: dataObj.created_at,
+		    updated_at: dataObj.updated_at,
+		})
+		return arrayData
+	}, [])
+}
+
+const getSummaryBallanceByUserId = () => {
+
+}
+
+
 
 /**
 	-userId: integer
 **/
-const getBalanceByUser = id => {
-	const listTransaction = transaction.getListTransaction({
-		limit:5,
-		offset:0
-	}, id, 'DESC')
-	.then(dataList=>{
-		return dataList.reduce((arrayData, dataObj)=>{
-			arrayData.push({
-			    trans_id: dataObj.trans_id,
-			    trans_type: dataObj.trans_type,
-			    trans_date: dataObj.trans_date,
-			    linked_txn_id: dataObj.linked_txn_id,
-			    status: (dataObj.beneficiary_id==id)? 'Debit' : 'Credit',
-			    amount: dataObj.amount,
-			    amount_currency: dataObj.amount_currency,
-			    created_at: dataObj.created_at,
-			    updated_at: dataObj.updated_at,
-			    amount_idr: dataObj.amount_idr
-			})
-			return arrayData
-		}, [])
-	})
-	const userDetail;
-	const summary=transaction.getSummaryBallanceByUserId(id);
-	Promise.all([listTransaction, userDetail, summary]).then(function(values) {
-	  return {
-	  	userInfo:values[1],
-	  	listTransaksi:values[0],
-	  	summary
-	  }
-	})
-}
+// const getBalanceByUser = (id, token) => {
+// 	const listTransaction = transaction.getListTransaction({
+// 		limit:5,
+// 		offset:0,
+// 		order: 'DESC'
+// 	}, id)
+// 	.then(dataList => reduceListTransaction(dataList, id))
+// 	const userDetail = user;
+// 	const summary=transaction.getSummaryBallanceByUserId(id);
+// 	// Promise.all([listTransaction, userDetail, summary]).then(function(values) {
+// 	//   return {
+// 	//   	userInfo:values[1],
+// 	//   	listTransaksi:values[0],
+// 	//   	summary
+// 	//   }
+// 	// })
+// }
 
-const countBalanceUser = id => transaction.getSummaryBallanceByUserId(id)
 
 module.exports = {
 	debit,
 	translateCurrencyToIDR,
 	translateCurrencyToCurency,
 	historyTransaction,
-	countBalanceUser
+	getSummaryBallanceByUserId
+	// countBalanceUser
 }

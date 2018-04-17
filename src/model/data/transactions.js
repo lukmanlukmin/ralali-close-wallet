@@ -2,7 +2,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   sequelize.associate = models => {
-    models.transactions.hasMany(models.currency, {
+    models.transactions.belongsTo(models.currency, {
       foreignKey: 'currency_id'
     })
   }
@@ -61,10 +61,6 @@ module.exports = function(sequelize, DataTypes) {
         model: 'currency',
         key: 'id'
       }
-    },
-    amount_idr: {
-      type: DataTypes.DECIMAL,
-      allowNull: false
     },
     info_1: {
       type: DataTypes.STRING,

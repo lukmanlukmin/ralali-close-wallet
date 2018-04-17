@@ -1,6 +1,6 @@
 'use strict'
-const model = require('../model')
-const { logger } = require('../helper/logger')
+const model = require('../../model')
+const { logger } = require('../../helper/logger')
 const math = require('mathjs')
 
 
@@ -21,7 +21,7 @@ const saveTransaction = (data) => {
 	})
 };
 
-const getListTransaction = (data, id, order='ASC') => {
+const getListTransaction = (data, id) => {
 	let where = {
 		$or: [
 			{ obligor_id: id }, 
@@ -32,28 +32,31 @@ const getListTransaction = (data, id, order='ASC') => {
 	where.created_at = {
     	$between: [data.startDate, data.endDate]
    	}
+   	data.order = (data.order==undefined)? 'ASC' : data.order
 	return model.transactions.find({
 		where,
 		limit: data.limit, 
 		offset: data.offset,
 		order: [
-            ['id', order]
-        ],
+			['id', data.order]
+		]
 	})
 };
 
-const getSummaryBallanceByUserId = id => {
+const getBallanceByUserId = id => {
 	const queryString = 'select (select sum(amount) from transactions where obligor_id='+id+') AS debit, (select sum(amount) from transactions where beneficiary_id='+id+') AS credit'
     return model.sequelize.query(queryString, { type: Sequelize.QueryTypes.SELECT})
 	.then(data=>{
- 		credit:data.credit,
- 		debit:data.debit,
- 		balance:math.chain(data.debit).subtract(data.credit).done()
+ 		return {
+ 			credit: data.credit,
+	 		debit: data.debit,
+	 		balance: math.chain(data.debit).subtract(data.credit).done()
+ 		}
  	})
 }
 
 module.exports = {
 	saveTransaction,
 	getListTransaction,
-	getSummaryBallanceByUserId
+	getBallanceByUserId
 }

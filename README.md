@@ -40,6 +40,11 @@ npm start
 ```
 or you can run with [pm2](https://www.npmjs.com/package/pm2)
 
+## See API status
+You can see actuator at
+_your-web-url_:_port_/actuator/info
+_your-web-url_:_port_/actuator/metrics
+
 ## Authors
 
 **Ralali Dev Team**. you can contact us [here](https://www.ralali.com/hubungikami)
